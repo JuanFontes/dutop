@@ -1,25 +1,94 @@
 <div align="center">
 
-# dutop
+<h1>📊 dutop</h1>
 
-**Big folders. Big files. One clear view.**
+<p><strong>Big folders. Big files. One clear view.</strong></p>
 
-Find your directory's biggest space hogs without losing the bigger picture.
+<p>Find your directory's biggest space hogs without losing the bigger picture.<br>
+Two ranked panels. A complete total. Back to your shell.</p>
 
-**Rust** · **macOS & Linux** · **MIT**
+<p>
+  <a href="Cargo.toml"><img src="https://img.shields.io/badge/Rust-Native_CLI-E57324?style=for-the-badge&amp;logo=rust&amp;logoColor=white" alt="Native Rust CLI"></a>
+  <a href="https://github.com/JuanFontes/homebrew-tap"><img src="https://img.shields.io/badge/Homebrew-Install-FBB040?style=for-the-badge&amp;logo=homebrew&amp;logoColor=black" alt="Install with Homebrew"></a>
+  <a href="#platform-support"><img src="https://img.shields.io/badge/macOS_%26_Linux-ARM64_%7C_x86__64-526D82?style=for-the-badge" alt="macOS and Linux on ARM64 and x86_64"></a>
+  <a href="#install"><img src="https://img.shields.io/badge/Debian-Packages-A81D33?style=for-the-badge&amp;logo=debian&amp;logoColor=white" alt="Debian packages"></a>
+</p>
 
-[Install](#install) · [Usage](#usage) · [How sizes work](#how-sizes-work) · [Contribute](CONTRIBUTING.md)
+<p>
+  <a href="https://github.com/JuanFontes/dutop/actions/workflows/ci.yml?query=branch%3Adev"><img src="https://img.shields.io/github/actions/workflow/status/JuanFontes/dutop/ci.yml?branch=dev&amp;style=flat-square&amp;label=CI&amp;logo=githubactions&amp;logoColor=white" alt="Build and package CI on dev"></a>
+  <a href="https://github.com/JuanFontes/dutop/releases"><img src="https://img.shields.io/github/v/release/JuanFontes/dutop?include_prereleases&amp;style=flat-square&amp;label=Release&amp;color=0F766E" alt="Latest release, including beta versions"></a>
+  <a href="#usage"><img src="https://img.shields.io/badge/Top-1%E2%80%9399-0F766E?style=flat-square" alt="Show 1 to 99 entries per panel"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0F766E?style=flat-square" alt="MIT license"></a>
+</p>
+
+<p>
+  <a href="#quick-start">🚀 Quick start</a> ·
+  <a href="#preview">👀 Preview</a> ·
+  <a href="https://github.com/JuanFontes/dutop/releases">📦 Downloads</a> ·
+  <a href="#how-sizes-work">📏 Size accounting</a> ·
+  <a href="CONTRIBUTING.md">🤝 Contributing</a>
+</p>
 
 </div>
+
+## 📊 What is dutop?
 
 `dutop` scans a directory and turns its disk usage into two ranked panels:
 **folders on the left, files on the right**, with the full directory total below.
 Pick your top count, spot the heavy hitters, and get back to your shell.
 
-> **Beta preview.** A small native CLI, with prebuilt packages for macOS and Linux.
-> No Python runtime, background service, or Rust toolchain needed to run it.
+Run it inside a project, a downloads folder, or a backup directory. It measures
+folders recursively but lists only immediate entries, so the result stays useful
+at the level where you are working.
 
-## See the space hogs
+**The CLI is written in Rust.** Installed packages run without Python, an external
+`du` process, or a Rust toolchain. It prints a report and exits: scanning is
+read-only, and `Ctrl+C` cancels it. No background service is started.
+
+> **Beta preview.** Native packages target macOS and Linux on ARM64 and x86_64.
+> See the [platform matrix](#platform-support) for tested systems and compatibility limits.
+
+<a id="features"></a>
+
+## ✨ Features at a glance
+
+| Feature | What you get |
+| --- | --- |
+| 🗂️ **Two independent rankings** | The largest immediate folders and files, side by side. |
+| 🧮 **A complete total** | Every scanned entry contributes, including hidden paths and items outside the top list. |
+| 🎚️ **Your top count** | Choose **1–99 entries per panel**; the default is 10. |
+| 🌡️ **Relative heat colors** | Larger entries transition from yellow to strong red; small ones keep their original colors. |
+| ↔️ **Responsive panels** | Narrow terminals stack the panels; long names preserve their endings, extensions and link markers when space permits. |
+| 🦀 **Native allocation scanning** | Reads filesystem metadata, not file contents, to measure allocated disk space. |
+| 📦 **Ready-to-run packages** | Homebrew, native archives, and Debian packages with SHA256 checksums and license notices. |
+| 🚦 **Explicit partial results** | Unreadable paths produce a marked partial total and a nonzero exit code. |
+
+**Jump to:** [Quick start](#quick-start) · [Examples](#usage) · [Read the report](#read-the-report) · [Install](#install) · [Size accounting](#how-sizes-work) · [Documentation](#documentation)
+
+<a id="quick-start"></a>
+
+## 🚀 Quick start
+
+**Homebrew** on macOS or Linux, ARM64 or x86_64:
+
+```sh
+brew install juanfontes/tap/dutop
+dutop --top 4 ~/Downloads
+```
+
+Homebrew adds the tap automatically and installs a verified native archive.
+Refresh the catalog with `brew update`, then update with `brew upgrade dutop`.
+Remove it with `brew uninstall dutop`.
+
+Already installed a manual copy? Run `type -a dutop` to see whether an older
+executable appears before Homebrew in your `PATH`.
+
+**Choose how much to see:** `dutop` shows the top 10 by default. Use `--top 4`
+for a compact report or `--top 99` to see more. The complete total stays the same.
+
+<a id="preview"></a>
+
+## 👀 See the space hogs
 
 ```sh
 dutop --top 4
@@ -47,35 +116,68 @@ Hidden included · % uses full directory total · symlink targets excluded
 Actual CLI output from a sample directory on macOS, with the path shortened.
 The plain-text preview omits terminal colors. Allocations can differ by filesystem.
 
-## Why dutop?
+<a id="usage"></a>
 
-- **Two rankings, one answer.** See the largest immediate folders and files separately.
-- **A complete total.** Items outside your top list still count, including hidden entries.
-- **Choose your view.** Show 1–99 entries per panel; the default is 10.
-- **Follow the color.** A relative red-to-yellow gradient draws attention to larger
-  entries, while small ones keep their original colors.
-- **Fits your terminal.** Panels stack in narrow windows. Long names keep their
-  endings when space permits, including extensions and link markers.
-- **Native Rust.** Runs without Python or an external `du` process. Reads filesystem
-  metadata to measure allocation; file contents are not read for size calculations.
+## 🧰 Everyday usage
 
-Run it inside a project, a downloads folder, or a backup directory. It prints a
-report and exits. Scanning is read-only; `Ctrl+C` cancels it.
-
-## Install
-
-### Homebrew — macOS and Linux
-
-```sh
-brew install juanfontes/tap/dutop
-dutop --top 4 ~/Downloads
+```text
+dutop [OPTIONS] [DIRECTORY]
 ```
 
-Homebrew adds the tap automatically and installs a verified native archive.
-Update with `brew upgrade dutop`; remove it with `brew uninstall dutop`.
+| Option | What it does |
+| --- | --- |
+| `DIRECTORY` | Directory to scan; defaults to the current directory. |
+| `-n, --top <N>` | Entries per panel, from **1 to 99**; defaults to **10**. |
+| `-h, --help` | Show usage, examples and size-accounting details. |
+| `-V, --version` | Print the installed version. |
 
-Already installed a manual copy? Run `type -a dutop` to see whether an older
-executable appears before Homebrew in your `PATH`.
+```sh
+dutop                              # Top 10 folders and files here
+dutop ~/Downloads                  # Inspect another directory
+dutop --top 4                      # A shorter report
+dutop -n 20 ./projects              # More detail, same complete total
+dutop --top=99 "/path/with spaces"  # Up to 99 entries in each panel
+NO_COLOR=1 dutop                    # Keep the layout, disable colors
+dutop > disk-usage.txt              # Save a plain-text report
+```
+
+The count applies **independently to each panel**. `--top 4` can show four folders
+and four files. It changes how many entries are displayed, not how much is scanned.
+
+<a id="read-the-report"></a>
+
+### 📖 Read the report
+
+| Field | Meaning |
+| --- | --- |
+| `FOLDERS 4 / 61` | Four folders shown out of 61 immediate folders found. |
+| `FILES 4 / 282` | Four non-directory entries shown out of 282 found, including links. |
+| `SIZE` | Allocated disk space for the entry; folders include their descendants. |
+| `% TOTAL` | Entry size divided by the complete scanned directory total. |
+| `[LINK]` | A symbolic link; its target is excluded from the scan. |
+| `TOTAL` | The complete scan total, including entries outside the displayed rankings. |
+
+With `--top` above 3, **size and percentage colors are relative to the largest
+entry in each panel**. The largest is strong red, intermediate values transition
+through yellow, and entries at or below 20% of that panel's maximum keep the
+original green size and cyan percentage. `--top 1`, `2` and `3` use the original
+colors throughout.
+
+The color scale and the printed percentage serve different purposes: colors help
+compare entries within a panel; percentages show their share of the full directory.
+Changing `--top` from 10 to 99 does not change an entry's color or percentage for
+the same scan results.
+
+Colors are disabled when stdout is piped, when `NO_COLOR` is set, or when
+`TERM=dumb`. Narrow layouts prioritize names and sizes as space runs out.
+
+<a id="install"></a>
+
+## 📦 More ways to install
+
+**[Download native archives, Debian packages, and SHA256SUMS →](https://github.com/JuanFontes/dutop/releases)**
+
+Prefer Homebrew? The [quick start](#quick-start) covers installation, upgrades and removal.
 
 ### Debian / Ubuntu
 
@@ -126,7 +228,9 @@ cargo build --release --locked
 ./target/release/dutop --top 4 ~/Downloads
 ```
 
-### Platforms
+<a id="platform-support"></a>
+
+## 💻 Platform support
 
 | Platform | CPU | Package baseline | Native CI |
 | --- | --- | --- | --- |
@@ -137,58 +241,9 @@ Older macOS versions are deployment targets, not separate tested runners. Static
 Linux binaries avoid a glibc dependency; filesystem and kernel compatibility still
 matter. Windows is not implemented. See [release details](docs/releasing.md).
 
-## Usage
+<a id="how-sizes-work"></a>
 
-```text
-dutop [OPTIONS] [DIRECTORY]
-```
-
-| Option | What it does |
-| --- | --- |
-| `DIRECTORY` | Directory to scan; defaults to the current directory. |
-| `-n, --top <N>` | Entries per panel, from **1 to 99**; defaults to **10**. |
-| `-h, --help` | Show usage, examples and size-accounting details. |
-| `-V, --version` | Print the installed version. |
-
-```sh
-dutop                              # Top 10 folders and files here
-dutop ~/Downloads                  # Inspect another directory
-dutop --top 4                      # A shorter report
-dutop -n 20 ./projects              # More detail, same complete total
-dutop --top=99 "/path/with spaces"  # Up to 99 entries in each panel
-NO_COLOR=1 dutop                    # Keep the layout, disable colors
-dutop > disk-usage.txt              # Save a plain-text report
-```
-
-The count applies **independently to each panel**. `--top 4` can show four folders
-and four files. It changes how many entries are displayed, not how much is scanned.
-
-### Read the report
-
-| Field | Meaning |
-| --- | --- |
-| `FOLDERS 4 / 61` | Four folders shown out of 61 immediate folders found. |
-| `FILES 4 / 282` | Four non-directory entries shown out of 282 found, including links. |
-| `SIZE` | Allocated disk space for the entry; folders include their descendants. |
-| `% TOTAL` | Entry size divided by the complete scanned directory total. |
-| `[LINK]` | A symbolic link; its target is excluded from the scan. |
-| `TOTAL` | The complete scan total, including entries outside the displayed rankings. |
-
-With `--top` above 3, **size and percentage colors are relative to the largest
-entry in each panel**. The largest is strong red, intermediate values transition
-through yellow, and entries at or below 20% of that panel's maximum keep the
-original green size and cyan percentage. `--top 1`, `2` and `3` use the original
-colors throughout.
-
-The color scale and the printed percentage serve different purposes: colors help
-compare entries within a panel; percentages show their share of the full directory.
-Changing `--top` from 10 to 99 does not change an entry's color or percentage for
-the same scan results.
-
-Colors are disabled when stdout is piped, when `NO_COLOR` is set, or when
-`TERM=dumb`. Narrow layouts prioritize names and sizes as space runs out.
-
-## How sizes work
+## 📏 How sizes work
 
 `dutop` reports **allocated disk space**, using binary units such as KiB, MiB and
 GiB. This is the storage allocation reported by the filesystem, rather than a
@@ -210,7 +265,9 @@ the allocation shown here.
 - **Allocated space is not a promise of space freed by deletion.** Filesystem
   clones, snapshots and shared storage affect what can actually be reclaimed.
 
-### Incomplete scans and exit codes
+<a id="exit-codes"></a>
+
+### 🚦 Incomplete scans and exit codes
 
 If some paths cannot be read, `dutop` prints the available results, labels the
 summary **`PARTIAL TOTAL`**, and reports the number of path/read errors. The
@@ -225,7 +282,25 @@ percentage heading becomes **`% KNOWN`**, using the partial total as its denomin
 
 Reports go to stdout; terminal progress and errors go to stderr.
 
-## Roadmap
+<a id="documentation"></a>
+
+## 📚 Go deeper
+
+| Looking for… | Read |
+| --- | --- |
+| Commands, options and examples | [Everyday usage](#usage) · `dutop --help` |
+| Totals, colors and partial scans | [Read the report](#read-the-report) · [Size accounting](#how-sizes-work) · [Exit codes](#exit-codes) |
+| Native packages and compatibility | [Install](#install) · [Platform support](#platform-support) |
+| Development setup and focused tests | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| Docker builds, checksums and tap maintenance | [Release guide](docs/releasing.md) |
+| Bundled dependency attribution | [Packaging notices](packaging/README.md) · Each release's `licenses/` directory |
+
+Docker is an optional tool for **building Linux packages**. You do not need it to
+run `dutop`, and there is no container service to keep running.
+
+<a id="roadmap"></a>
+
+## 🧭 Project status
 
 - [x] Native scanning and separate folder/file rankings.
 - [x] Configurable top counts, complete totals and partial-scan reporting.
@@ -234,7 +309,9 @@ Reports go to stdout; terminal progress and errors go to stderr.
 - [x] Versioned binaries and checksums.
 - [x] Debian packages and a Homebrew tap.
 
-## Contributing
+<a id="contributing"></a>
+
+## 🤝 Build and contribute
 
 Found a tricky filesystem case? Have an idea that makes disk usage easier to read?
 We'd love the help. Bug reports, documentation fixes and small, focused pull
@@ -243,6 +320,10 @@ requests are all welcome.
 Start with [CONTRIBUTING.md](CONTRIBUTING.md) for setup, the code map, focused tests
 and what to include in a pull request.
 
-## License
+<a id="license"></a>
 
-[MIT](LICENSE) © 2026 Juan Fontes.
+## 📄 License
+
+[MIT](LICENSE) © 2026 Juan Fontes. Native packages include the applicable dependency,
+Rust standard library, and Linux musl notices. Keep those notices when redistributing
+binaries.
