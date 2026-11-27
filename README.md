@@ -16,7 +16,7 @@ Two ranked panels. A complete total. Back to your shell.</p>
 
 <p>
   <a href="https://github.com/JuanFontes/dutop/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/JuanFontes/dutop/ci.yml?branch=main&amp;style=flat-square&amp;label=CI&amp;logo=githubactions&amp;logoColor=white" alt="Build and package CI on main"></a>
-  <a href="https://github.com/JuanFontes/dutop/releases"><img src="https://img.shields.io/github/v/release/JuanFontes/dutop?include_prereleases&amp;style=flat-square&amp;label=Release&amp;color=0F766E" alt="Latest release, including beta versions"></a>
+  <a href="https://github.com/JuanFontes/dutop/releases/latest"><img src="https://img.shields.io/github/v/release/JuanFontes/dutop?style=flat-square&amp;label=Release&amp;color=0F766E" alt="Latest stable release"></a>
   <a href="#usage"><img src="https://img.shields.io/badge/Top-1%E2%80%9399-0F766E?style=flat-square" alt="Show 1 to 99 entries per panel"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0F766E?style=flat-square" alt="MIT license"></a>
 </p>
@@ -24,7 +24,7 @@ Two ranked panels. A complete total. Back to your shell.</p>
 <p>
   <a href="#quick-start">🚀 Quick start</a> ·
   <a href="#preview">👀 Preview</a> ·
-  <a href="https://github.com/JuanFontes/dutop/releases">📦 Downloads</a> ·
+  <a href="https://github.com/JuanFontes/dutop/releases/latest">📦 Downloads</a> ·
   <a href="#how-sizes-work">📏 Size accounting</a> ·
   <a href="CONTRIBUTING.md">🤝 Contributing</a>
 </p>
@@ -45,7 +45,7 @@ at the level where you are working.
 `du` process, or a Rust toolchain. It prints a report and exits: scanning is
 read-only, and `Ctrl+C` cancels it. No background service is started.
 
-> **Beta preview.** Native packages target macOS and Linux on ARM64 and x86_64.
+> **Native packages.** Available for macOS and Linux on ARM64 and x86_64.
 > See the [platform matrix](#platform-support) for tested systems and compatibility limits.
 
 <a id="features"></a>
@@ -175,18 +175,18 @@ Colors are disabled when stdout is piped, when `NO_COLOR` is set, or when
 
 ## 📦 More ways to install
 
-**[Download native archives, Debian packages, and SHA256SUMS →](https://github.com/JuanFontes/dutop/releases)**
+**[Download native archives, Debian packages, and SHA256SUMS →](https://github.com/JuanFontes/dutop/releases/latest)**
 
 Prefer Homebrew? The [quick start](#quick-start) covers installation, upgrades and removal.
 
 ### Debian / Ubuntu
 
 Download the `.deb` for your architecture from
-[Releases](https://github.com/JuanFontes/dutop/releases): `amd64` for Intel/AMD,
+[Releases](https://github.com/JuanFontes/dutop/releases/latest): `amd64` for Intel/AMD,
 `arm64` for ARM. Verify it against the release's `SHA256SUMS`, then install:
 
 ```sh
-sudo apt install ./dutop_0.1.0-beta.1_amd64.deb
+sudo apt install ./dutop_0.1.0_amd64.deb
 dutop --help
 ```
 
@@ -200,10 +200,10 @@ matching archive and `SHA256SUMS`, verify the selected file, then extract it.
 For example, on an Apple Silicon Mac:
 
 ```sh
-shasum -a 256 dutop-0.1.0-beta.1-aarch64-apple-darwin.tar.gz
+shasum -a 256 dutop-0.1.0-aarch64-apple-darwin.tar.gz
 # Compare the result with its line in SHA256SUMS before extracting.
-tar -xzf dutop-0.1.0-beta.1-aarch64-apple-darwin.tar.gz
-./dutop-0.1.0-beta.1-aarch64-apple-darwin/dutop --help
+tar -xzf dutop-0.1.0-aarch64-apple-darwin.tar.gz
+./dutop-0.1.0-aarch64-apple-darwin/dutop --help
 ```
 
 Keep the accompanying license notices when redistributing a binary.

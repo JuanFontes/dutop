@@ -28,7 +28,7 @@ platform support or dependencies before investing in a large implementation.
 ## Set up a checkout
 
 Fork and clone the repository, then create a branch for your change. Development
-currently happens on `dev`; base contributions on that branch during this preview.
+currently happens on `dev`; base contributions on that branch for ongoing development.
 
 ```sh
 git switch dev
@@ -184,7 +184,7 @@ behavior need a concrete reason and checks for the affected paths.
 
 ## Open a focused pull request
 
-Target `dev` during the current preview. Describe:
+Target `dev` for ongoing development. Describe:
 
 1. The problem and a concrete before/after example.
 2. The resulting behavior and any compatibility or accounting impact.
@@ -194,6 +194,13 @@ Target `dev` during the current preview. Describe:
 Include wide and narrow output examples for visual changes. Use sample data so
 reviewers can reproduce the result. Update help or documentation when users need
 to learn new behavior, and keep unrelated refactors separate.
+
+Pull requests run CI; pushes to `main` run it again for the integrated commit.
+This avoids duplicate push jobs on development branches.
+
+Keep automatic checks enabled for commits pushed to `main`. Do not put skip-CI
+markers in their commit messages; a manually dispatched run is not a substitute
+for the status displayed on the branch tip.
 
 Release tags, publishing, package uploads and repository visibility are handled
 separately from a contribution. A local build or a passing test does not by itself

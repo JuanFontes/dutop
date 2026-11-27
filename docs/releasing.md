@@ -26,10 +26,10 @@ compatibility with every kernel or filesystem.
    uninstall. Permission checks run as unprivileged users.
 3. Review the source, dependency changes, license notices and CI evidence.
 4. Integrate the reviewed commit and create its exact version tag, for example
-   `v0.1.0-beta.1`. Do not move a published tag or replace an existing artifact.
+   `v0.1.0`. Do not move a published tag or replace an existing artifact.
 5. Dispatch **Draft release** at that tag, with the same tag as its input. It checks
    the version and commit, runs the package matrix, verifies checksums, then creates
-   a draft prerelease. Nothing is automatically published to the public tap.
+   a draft release (marked as a prerelease only for a prerelease tag). Nothing is automatically published to the public tap.
 6. Download and inspect the draft assets. The generated `dutop.rb` uses all four
    verified archive SHA256 values. Publish the reviewed release, then update
    `Formula/dutop.rb` in `JuanFontes/homebrew-tap` and run its focused package checks.
@@ -61,7 +61,7 @@ Archive checksums cover every byte, including license documents.
 checks every manifest against its file, and rejects duplicate or missing archives:
 
 ```sh
-python3 scripts/prepare_tap.py --artifacts artifacts --version 0.1.0-beta.1 > dutop.rb
+python3 scripts/prepare_tap.py --artifacts artifacts --version 0.1.0 > dutop.rb
 ```
 
 `--local` changes URLs to verified local files for an isolated Homebrew candidate

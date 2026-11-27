@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing version tag, for example v0.1.0-beta.1'
+        description: 'Existing version tag, for example v0.1.0'
         required: true
         type: string
 permissions:
@@ -57,5 +57,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.tag }}
         run: |
-          gh release create "$RELEASE_TAG" release/* --verify-tag --draft --prerelease \
+          prerelease_args=()
+          if [[ "$RELEASE_TAG" == *-* ]]; then
+            prerelease_args+=(--prerelease)
+          fi
+          gh release create "$RELEASE_TAG" release/* --verify-tag --draft "${prerelease_args[@]}" \
             --title "dutop $RELEASE_TAG" --notes-file docs/release-notes.md
