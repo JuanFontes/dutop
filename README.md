@@ -94,27 +94,33 @@ for a compact report or `--top 99` to see more. The complete total stays the sam
 dutop --top 4
 ```
 
-<!-- Example captured from the native CLI on a small sample directory. -->
+![Actual dutop output with separate top-four folder and file panels, heat colors, percentages and a complete total](docs/images/dutop-preview.png)
+
+Rendered from actual `dutop 0.1.0` output on macOS using a sample directory.
+Only the path is shortened. Allocations can differ by filesystem.
+
+<details>
+<summary>Text-only version of the example</summary>
+
 ```text
-dutop ./workspace                                                                        ALLOCATED SPACE
+dutop ./workspace                                                                              ALLOCATED SPACE
 
-╭ FOLDERS 4 / 4 ─────────────────────────────────╮   ╭ FILES 4 / 4 ───────────────────────────────────╮
-│ #   NAME                         SIZE  % TOTAL │   │ #   NAME                         SIZE  % TOTAL │
-│────────────────────────────────────────────────│   │────────────────────────────────────────────────│
-│ 01  archives/               512.0 KiB    19.0% │   │ 01  disk-image.iso          768.0 KiB    28.6% │
-│ 02  projects/               320.0 KiB    11.9% │   │ 02  model.gguf              448.0 KiB    16.7% │
-│ 03  .cache/                 192.0 KiB     7.1% │   │ 03  backup.tar.zst          256.0 KiB     9.5% │
-│ 04  recordings/             128.0 KiB     4.8% │   │ 04  capture.mov              64.0 KiB     2.4% │
-╰────────────────────────────────────────────────╯   ╰────────────────────────────────────────────────╯
+╭ FOLDERS 4 / 4 ────────────────────────────────────╮   ╭ FILES 4 / 4 ──────────────────────────────────────╮
+│ #   NAME                            SIZE  % TOTAL │   │ #   NAME                            SIZE  % TOTAL │
+│───────────────────────────────────────────────────│   │───────────────────────────────────────────────────│
+│ 01  archives/                  512.0 KiB    19.0% │   │ 01  disk-image.iso             768.0 KiB    28.6% │
+│ 02  projects/                  320.0 KiB    11.9% │   │ 02  model.gguf                 448.0 KiB    16.7% │
+│ 03  .cache/                    192.0 KiB     7.1% │   │ 03  backup.tar.zst             256.0 KiB     9.5% │
+│ 04  recordings/                128.0 KiB     4.8% │   │ 04  capture.mov                 64.0 KiB     2.4% │
+╰───────────────────────────────────────────────────╯   ╰───────────────────────────────────────────────────╯
 
-────────────────────────────────────────────────────────────────────────────────────────────────────────
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 TOTAL 2.6 MiB    4 folders    4 files/links
-────────────────────────────────────────────────────────────────────────────────────────────────────────
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Hidden included · % uses full directory total · symlink targets excluded
 ```
 
-Actual CLI output from a sample directory on macOS, with the path shortened.
-The plain-text preview omits terminal colors. Allocations can differ by filesystem.
+</details>
 
 <a id="usage"></a>
 
