@@ -15,7 +15,7 @@ Two ranked panels. A complete total. Back to your shell.</p>
 </p>
 
 <p>
-  <a href="https://github.com/JuanFontes/dutop/actions/workflows/ci.yml?query=branch%3Adev"><img src="https://img.shields.io/github/actions/workflow/status/JuanFontes/dutop/ci.yml?branch=dev&amp;style=flat-square&amp;label=CI&amp;logo=githubactions&amp;logoColor=white" alt="Build and package CI on dev"></a>
+  <a href="https://github.com/JuanFontes/dutop/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/JuanFontes/dutop/ci.yml?branch=main&amp;style=flat-square&amp;label=CI&amp;logo=githubactions&amp;logoColor=white" alt="Build and package CI on main"></a>
   <a href="https://github.com/JuanFontes/dutop/releases"><img src="https://img.shields.io/github/v/release/JuanFontes/dutop?include_prereleases&amp;style=flat-square&amp;label=Release&amp;color=0F766E" alt="Latest release, including beta versions"></a>
   <a href="#usage"><img src="https://img.shields.io/badge/Top-1%E2%80%9399-0F766E?style=flat-square" alt="Show 1 to 99 entries per panel"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0F766E?style=flat-square" alt="MIT license"></a>
