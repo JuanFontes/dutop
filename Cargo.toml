@@ -1,0 +1,26 @@
+[package]
+name = "dutop"
+version = "0.1.0-beta.1"
+edition = "2024"
+rust-version = "1.85"
+description = "The largest immediate folders and files, with complete allocated disk usage"
+repository = "https://github.com/JuanFontes/dutop"
+license = "MIT"
+
+[dependencies]
+clap = "4.6.7"
+rustix = { version = "1.1.5", features = ["termios", "fs"] }
+signal-hook = { version = "0.3.18", default-features = false }
+unicode-width = "0.2.2"
+unicode-segmentation = "1.13.3"
+unicode-general-category = "1.1.0"
+
+[dev-dependencies]
+tempfile = "3.27.0"
+
+[profile.release]
+lto = "thin"
+strip = true
+
+[lints.rust]
+unsafe_code = "forbid"

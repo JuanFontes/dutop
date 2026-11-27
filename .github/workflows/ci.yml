@@ -1,0 +1,126 @@
+name: CI
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-24.04
+    env:
+      RUSTUP_TOOLCHAIN: 1.100.0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install 1.100.0 --profile minimal --component rustfmt,clippy
+      - run: cargo +1.100.0 fmt --check
+      - run: cargo +1.100.0 clippy --locked --lib --bin dutop -- -D warnings
+      - run: cargo fetch --locked
+      - run: python3 -m unittest discover -s tests/packaging -v
+
+  msrv:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install 1.85.0 --profile minimal
+      - run: cargo +1.85.0 test --locked
+
+  build:
+    name: Build and test (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            target: aarch64-apple-darwin
+          - os: macos-15-intel
+            target: x86_64-apple-darwin
+          - os: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-musl
+          - os: ubuntu-24.04
+            target: x86_64-unknown-linux-musl
+    env:
+      RUSTUP_TOOLCHAIN: 1.100.0
+      MACOSX_DEPLOYMENT_TARGET: '13.0'
+      TARGET: ${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - run: rustup toolchain install 1.100.0 --profile minimal --target "$TARGET"
+      - name: Test native target as the unprivileged runner
+        run: cargo test --locked --target "$TARGET"
+      - run: cargo build --release --locked --target "$TARGET"
+      - run: python3 tests/terminal.py "target/$TARGET/release/dutop"
+      - name: Package and verify the archive
+        run: |
+          python3 scripts/package.py build --target "$TARGET" --binary "target/$TARGET/release/dutop"
+          version=$("target/$TARGET/release/dutop" --version | cut -d ' ' -f 2)
+          python3 tests/package_smoke.py --version "$version" --archive "dist/dutop-$version-$TARGET.tar.gz"
+      - name: Install, run, and uninstall the Debian package
+        if: runner.os == 'Linux'
+        run: |
+          file "target/$TARGET/release/dutop" | grep 'static'
+          version=$("target/$TARGET/release/dutop" --version | cut -d ' ' -f 2)
+          sudo dpkg -i dist/*.deb
+          python3 tests/package_smoke.py --version "$version" --binary /usr/bin/dutop
+          sudo dpkg -r dutop
+          test ! -e /usr/bin/dutop
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dutop-${{ matrix.target }}
+          path: dist/*
+          if-no-files-found: error
+
+  homebrew:
+    name: Homebrew install/test/uninstall (${{ matrix.os }})
+    needs: [build, quality, msrv]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel, ubuntu-24.04, ubuntu-24.04-arm]
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+      HOMEBREW_NO_INSTALL_CLEANUP: '1'
+      HOMEBREW_NO_ANALYTICS: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: Homebrew/actions/setup-homebrew@f9676f1ffe2e1a720f81b2c54c51cfb99915ec14
+        with:
+          stable: true
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: dutop-*
+          path: artifacts
+      - name: Test the exact candidate artifacts through Homebrew
+        run: |
+          version=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml", "rb"))["package"]["version"])')
+          brew tap-new local/dutop-check --no-git
+          tap=$(brew --repository local/dutop-check)
+          python3 scripts/prepare_tap.py --artifacts artifacts --version "$version" --local > "$tap/Formula/dutop.rb"
+          brew style "$tap/Formula/dutop.rb"
+          brew install local/dutop-check/dutop
+          brew test local/dutop-check/dutop
+          python3 tests/package_smoke.py --version "$version" --binary "$(brew --prefix)/bin/dutop"
+          brew uninstall dutop
+          test ! -e "$(brew --prefix)/bin/dutop"
+          brew untap local/dutop-check

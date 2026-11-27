@@ -1,0 +1,61 @@
+name: Draft release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing version tag, for example v0.1.0-beta.1'
+        required: true
+        type: string
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Require an exact version tag at this workflow commit
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          python3 - <<'PY'
+          import os, re, subprocess, tomllib
+          tag = os.environ['RELEASE_TAG']
+          version = tomllib.load(open('Cargo.toml', 'rb'))['package']['version']
+          assert re.fullmatch(r'v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?', tag)
+          assert tag == 'v' + version
+          commit = subprocess.check_output(['git', 'rev-parse', 'refs/tags/' + tag + '^{commit}'], text=True).strip()
+          assert commit == os.environ['GITHUB_SHA'], 'tag must point at the workflow commit'
+          PY
+  checks:
+    needs: validate
+    uses: ./.github/workflows/ci.yml
+  draft:
+    needs: checks
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: dutop-*
+          path: artifacts
+      - name: Verify and assemble the release
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          python3 scripts/prepare_tap.py --artifacts artifacts \
+            --version "${RELEASE_TAG#v}" --bundle release
+      - name: Create a draft; publishing remains an explicit maintainer action
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          gh release create "$RELEASE_TAG" release/* --verify-tag --draft --prerelease \
+            --title "dutop $RELEASE_TAG" --notes-file docs/release-notes.md
